@@ -1,4 +1,3 @@
-
 public class Positions {
 	private  String position;
 	private String suggestion;
@@ -8,6 +7,9 @@ public class Positions {
 	}
 	public void setPosition(String position) {
 		this.position = position;
+	}
+	public String getPosition(String position) {
+		return position;
 	}
 	public boolean isHarmful() {
 		return isHarmful;
