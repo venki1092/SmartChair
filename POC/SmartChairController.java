@@ -55,7 +55,7 @@ public class SmartChairController {
 		 	String topic        = topicName;
 	        String content      = messageContent;
 	        int qos             = 2;
-	        String broker       = "tcp://10.250.33.173:2882";
+	        String broker       = "tcp://54.187.143.223:2882";
 	        String clientId     = "JavaSample";
 	        MemoryPersistence persistence = new MemoryPersistence();
 
