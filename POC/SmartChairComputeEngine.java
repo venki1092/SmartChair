@@ -1,11 +1,16 @@
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.bson.Document;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONObject;
 
 import com.mongodb.MongoClient;
@@ -13,29 +18,65 @@ import com.mongodb.client.MongoDatabase;
 
 public class SmartChairComputeEngine implements MqttCallback {
 	MqttClient client;
+	Calculations calculations;
+	int harmfulCounter = 0;
 	public static void main(String[] args) {
-		new SmartChairComputeEngine().doDemo();
-		//new SmartChairComputeEngine().insertDataToMongoDB();
+			
+			new SmartChairComputeEngine().doDemo();
+		
+			//new SmartChairComputeEngine().insertDataToMongoDB();
+			
 	}
-	public void insertDataToMongoDB()
+	public void insertDataToMongoDB(int pressure1, int pressure2, int pressure3 , int pressure4, int temperature , int angle, int isHarmful, String position ,String suggestion)
 	{
-		MongoClient mongoClient = new MongoClient("10.250.33.173");
+		//MongoClient mongoClient = new MongoClient("54.191.239.166",27018);
+		MongoClient mongoClient = new MongoClient();
 		MongoDatabase db = mongoClient.getDatabase("smartchairdb");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+		Date time = new Date();
+
+		String currentDate = dateFormat.format(date); //2014/08/06 15:59:48
+		String currentTime = timeFormat.format(time);
 		db.getCollection("smartchairdataset").insertOne( new Document()
-                        .append("pressure1", "1")
-                        .append("pressure2", "1")
-                        .append("pressure3", "1")
-                        .append("pressure4", "1")
-                        .append("temperature", "1")
-                        .append("angle", "1")
-                        .append("condition", "1")
-                        .append("date", "1")
-                        .append("time", "1"));
+                        .append("pressure1", pressure1)
+                        .append("pressure2", pressure2)
+                        .append("pressure3", pressure3)
+                        .append("pressure4", pressure4)
+                        .append("temperature", temperature)
+                        .append("angle", angle)
+                        .append("isHarmful", isHarmful)
+                        .append("suggestion", suggestion)
+                        .append("position", position)
+                        .append("date",currentDate )
+                        .append("time",currentTime ));
 		mongoClient.close();
+	}
+	public void insertNotificationToMongoDB(String Notification)
+	{
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+		Date time = new Date();
+
+		String currentDate = dateFormat.format(date); //2014/08/06 15:59:48
+		String currentTime = timeFormat.format(time);
+		
+		MongoClient mongoClient = new MongoClient();
+		MongoDatabase db = mongoClient.getDatabase("smartchairdb");
+		
+		db.getCollection("smartnotfication").insertOne( new Document()
+                .append("Notification", Notification)
+                .append("Date", currentDate)
+                .append("Time", currentTime));
+				mongoClient.close();
+		
 	}
 	public void doDemo() {
 	    try {
-	        client = new MqttClient("tcp://10.250.33.173:2882", "Sending");
+	    	calculations = new Calculations();
+	        client = new MqttClient("tcp://54.187.143.223:2882", "Sending");
 	        client.connect();
 	        client.setCallback(this);	
 	        client.subscribe("/smartchair/data");
@@ -54,10 +95,43 @@ public class SmartChairComputeEngine implements MqttCallback {
 	    // TODO Auto-generated method stub
 
 	}
+	public static void sendMessage(String topicName , String messageContent)
+	{
+		 	String topic        = topicName;
+	        String content      = messageContent;
+	        int qos             = 2;
+	        String broker       = "tcp://54.187.143.223:2882";
+	        String clientId     = "JavaSample";
+	        MemoryPersistence persistence = new MemoryPersistence();
 
+	        try {
+	            MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+	            MqttConnectOptions connOpts = new MqttConnectOptions();
+	            connOpts.setCleanSession(true);
+	            System.out.println("Connecting to broker: "+broker);
+	            sampleClient.connect(connOpts);
+	            System.out.println("Connected");
+	            System.out.println("Publishing message: "+content);
+	            MqttMessage message = new MqttMessage(content.getBytes());
+	            message.setQos(qos);
+	            
+	            sampleClient.publish(topic, message);
+	            System.out.println("Message published");
+	            sampleClient.disconnect();
+	            System.out.println("Disconnected");
+	            //System.exit(0);
+	        } catch(MqttException me) {
+	            System.out.println("reason "+me.getReasonCode());
+	            System.out.println("msg "+me.getMessage());
+	            System.out.println("loc "+me.getLocalizedMessage());
+	            System.out.println("cause "+me.getCause());
+	            System.out.println("excep "+me);
+	            me.printStackTrace();
+	        }
+	}
 	@Override
 	public void messageArrived(String topic, MqttMessage message)
-	        throws Exception {
+	        throws Exception {	
 		System.out.println(topic);
 		System.out.println(message);   
 		try{
@@ -71,7 +145,32 @@ public class SmartChairComputeEngine implements MqttCallback {
 		Integer angle = obj.getInt("angle");
 		Integer temperature = obj.getInt("temperature");
 		System.out.println(pressure1 + " " + pressure2 + " " + pressure3 + " " + pressure4 + " "+ distance1 + " " + distance2 + " "+ angle +" " + temperature );
-		
+		//implment business logic 
+		System.out.println("[1]");
+		if(pressure1 != 0 || pressure2 != 0 || pressure3 != 0 || pressure4 != 0)
+		{
+			Positions p = calculations.evaluate(pressure1, pressure2, pressure3, pressure4, distance1, distance2, angle);
+			System.out.println("[2]");
+			insertDataToMongoDB(pressure1, pressure2, pressure3, pressure4, temperature, angle, (p.isHarmful()) ? 1 : 0, p.getPosition(), p.getSuggestion());
+			if(p.isHarmful())
+			{
+				harmfulCounter++;
+			}
+			else
+				harmfulCounter = 0;
+			if(harmfulCounter == 4)
+			{
+				JSONObject dataToSend = new JSONObject();
+				dataToSend.put("isHarmful", p.isHarmful()) ;
+				dataToSend.put("position", p.getPosition()) ;
+				dataToSend.put("suggestion",p.getSuggestion()) ;
+				insertNotificationToMongoDB(p.getPosition());
+				sendMessage("/smartchair/alert",dataToSend.toString());
+			}
+		}
+		else
+			harmfulCounter = 0;
+		System.out.println("[3]");
 		System.out.println(obj.toString());
 		}
 		catch(Exception ex)
