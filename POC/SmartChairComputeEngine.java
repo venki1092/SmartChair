@@ -20,17 +20,20 @@ public class SmartChairComputeEngine implements MqttCallback {
 	MqttClient client;
 	Calculations calculations;
 	int harmfulCounter = 0;
+	String MosquittoBrokerUrl = "tcp://54.186.96.23:2882";
+	String MongoDaemonIp = "54.186.96.23";
+	int MongoPort = 27018;
 	public static void main(String[] args) {
 			
 			new SmartChairComputeEngine().doDemo();
-		
+			//db.collection.find().limit(1).sort({$natural:-1})
 			//new SmartChairComputeEngine().insertDataToMongoDB();
 			
 	}
 	public void insertDataToMongoDB(int pressure1, int pressure2, int pressure3 , int pressure4, int temperature , int angle, int isHarmful, String position ,String suggestion)
 	{
 		//MongoClient mongoClient = new MongoClient("54.191.239.166",27018);
-		MongoClient mongoClient = new MongoClient();
+		MongoClient mongoClient = new MongoClient(MongoDaemonIp,MongoPort);
 		MongoDatabase db = mongoClient.getDatabase("smartchairdb");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date date = new Date();
@@ -53,7 +56,7 @@ public class SmartChairComputeEngine implements MqttCallback {
                         .append("time",currentTime ));
 		mongoClient.close();
 	}
-	public void insertNotificationToMongoDB(String Notification)
+	public void insertNotificationToMongoDB(String Position, String Suggestion)
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		Date date = new Date();
@@ -63,11 +66,12 @@ public class SmartChairComputeEngine implements MqttCallback {
 		String currentDate = dateFormat.format(date); //2014/08/06 15:59:48
 		String currentTime = timeFormat.format(time);
 		
-		MongoClient mongoClient = new MongoClient();
+		MongoClient mongoClient = new MongoClient(MongoDaemonIp,MongoPort);
 		MongoDatabase db = mongoClient.getDatabase("smartchairdb");
 		
 		db.getCollection("smartnotfication").insertOne( new Document()
-                .append("Notification", Notification)
+                .append("Position", Position)
+                .append("Suggestion", Suggestion)	
                 .append("Date", currentDate)
                 .append("Time", currentTime));
 				mongoClient.close();
@@ -76,7 +80,7 @@ public class SmartChairComputeEngine implements MqttCallback {
 	public void doDemo() {
 	    try {
 	    	calculations = new Calculations();
-	        client = new MqttClient("tcp://54.187.143.223:2882", "Sending");
+	        client = new MqttClient(MosquittoBrokerUrl, "Sending");
 	        client.connect();
 	        client.setCallback(this);	
 	        client.subscribe("/smartchair/data");
@@ -95,31 +99,28 @@ public class SmartChairComputeEngine implements MqttCallback {
 	    // TODO Auto-generated method stub
 
 	}
-	public static void sendMessage(String topicName , String messageContent)
+	public void sendMessage(String topicName , String messageContent)
 	{
 		 	String topic        = topicName;
 	        String content      = messageContent;
 	        int qos             = 2;
-	        String broker       = "tcp://54.187.143.223:2882";
-	        String clientId     = "JavaSample";
+	        String clientId     = "smartchaircomputeengine";
 	        MemoryPersistence persistence = new MemoryPersistence();
-
 	        try {
-	            MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
+	            MqttClient sampleClient = new MqttClient(MosquittoBrokerUrl, clientId, persistence);
 	            MqttConnectOptions connOpts = new MqttConnectOptions();
 	            connOpts.setCleanSession(true);
-	            System.out.println("Connecting to broker: "+broker);
+	            System.out.println("Connecting to broker: "+MosquittoBrokerUrl);
 	            sampleClient.connect(connOpts);
 	            System.out.println("Connected");
 	            System.out.println("Publishing message: "+content);
 	            MqttMessage message = new MqttMessage(content.getBytes());
 	            message.setQos(qos);
-	            
 	            sampleClient.publish(topic, message);
 	            System.out.println("Message published");
 	            sampleClient.disconnect();
 	            System.out.println("Disconnected");
-	            //System.exit(0);
+	            //System.exit(0);	
 	        } catch(MqttException me) {
 	            System.out.println("reason "+me.getReasonCode());
 	            System.out.println("msg "+me.getMessage());
@@ -153,18 +154,17 @@ public class SmartChairComputeEngine implements MqttCallback {
 			System.out.println("[2]");
 			insertDataToMongoDB(pressure1, pressure2, pressure3, pressure4, temperature, angle, (p.isHarmful()) ? 1 : 0, p.getPosition(), p.getSuggestion());
 			if(p.isHarmful())
-			{
 				harmfulCounter++;
-			}
 			else
 				harmfulCounter = 0;
-			if(harmfulCounter == 4)
+			
+			if(harmfulCounter == 1)
 			{
 				JSONObject dataToSend = new JSONObject();
-				dataToSend.put("isHarmful", p.isHarmful()) ;
-				dataToSend.put("position", p.getPosition()) ;
-				dataToSend.put("suggestion",p.getSuggestion()) ;
-				insertNotificationToMongoDB(p.getPosition());
+				dataToSend.put("isHarmful", p.isHarmful());
+				dataToSend.put("position", p.getPosition());
+				dataToSend.put("suggestion",p.getSuggestion());
+				insertNotificationToMongoDB(p.getPosition(),p.getSuggestion());
 				sendMessage("/smartchair/alert",dataToSend.toString());
 			}
 		}
