@@ -1,0 +1,8 @@
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\bin\Debug\GallileoInterface.exe.config
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\bin\Debug\GallileoInterface.exe
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\bin\Debug\GallileoInterface.pdb
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\obj\Debug\GallileoInterface.csprojResolveAssemblyReference.cache
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\obj\Debug\GallileoInterface.exe
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\obj\Debug\GallileoInterface.pdb
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\bin\Debug\M2Mqtt.Net.dll
+c:\users\venki\onedrive\documents\visual studio 2015\Projects\GallileoInterface\GallileoInterface\bin\Debug\M2Mqtt.Net.pdb
