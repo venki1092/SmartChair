@@ -13,6 +13,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.json.JSONObject;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
@@ -42,18 +43,23 @@ public class SmartChairComputeEngine implements MqttCallback {
 
 		String currentDate = dateFormat.format(date); //2014/08/06 15:59:48
 		String currentTime = timeFormat.format(time);
-		db.getCollection("smartchairdataset").insertOne( new Document()
-                        .append("pressure1", pressure1)
-                        .append("pressure2", pressure2)
-                        .append("pressure3", pressure3)
-                        .append("pressure4", pressure4)
-                        .append("temperature", temperature)
-                        .append("angle", angle)
-                        .append("isHarmful", isHarmful)
-                        .append("suggestion", suggestion)
-                        .append("position", position)
-                        .append("date",currentDate )
-                        .append("time",currentTime ));
+		Document d = new Document()
+				.append("pressure1", pressure1)
+                .append("pressure2", pressure2)
+                .append("pressure3", pressure3)
+                .append("pressure4", pressure4)
+                .append("temperature", temperature)
+                .append("angle", angle)
+                .append("isHarmful", isHarmful)
+                .append("suggestion", suggestion)
+                .append("position", position)
+                .append("time",currentTime );
+		Date now = new Date();
+
+		BasicDBObject timeNow = new BasicDBObject("date", time);
+		
+		d.putAll(timeNow);
+		db.getCollection("smartchairdataset").insertOne(d);
 		mongoClient.close();
 	}
 	public void insertNotificationToMongoDB(String Position, String Suggestion)
@@ -69,14 +75,21 @@ public class SmartChairComputeEngine implements MqttCallback {
 		MongoClient mongoClient = new MongoClient(MongoDaemonIp,MongoPort);
 		MongoDatabase db = mongoClient.getDatabase("smartchairdb");
 		
-		db.getCollection("smartnotfication").insertOne( new Document()
-                .append("Position", Position)
+		Document d = new Document()
+				.append("Position", Position)
                 .append("Suggestion", Suggestion)	
                 .append("Date", currentDate)
-                .append("Time", currentTime));
-				mongoClient.close();
+                .append("Time", currentTime);
+			
+		Date now = new Date();
+
+		BasicDBObject timeNow = new BasicDBObject("date", time);
+		d.putAll(timeNow);
+
+		db.getCollection("smartnotification").insertOne(d);
+		mongoClient.close();
 		
-	}
+	}	
 	public void doDemo() {
 	    try {
 	    	calculations = new Calculations();
