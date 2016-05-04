@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en" class="no-js">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="theme-color" content="#3e454c">
+	
+	<title>Harmony - Free responsive Bootstrap admin template by Themestruck.com</title>
+
+	<!-- Font awesome -->
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<!-- Sandstone Bootstrap CSS -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<!-- Bootstrap Datatables -->
+	<link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
+	<!-- Bootstrap social button library -->
+	<link rel="stylesheet" href="css/bootstrap-social.css">
+	<!-- Bootstrap select -->
+	<link rel="stylesheet" href="css/bootstrap-select.css">
+	<!-- Bootstrap file input -->
+	<link rel="stylesheet" href="css/fileinput.min.css">
+	<!-- Awesome Bootstrap checkbox -->
+	<link rel="stylesheet" href="css/awesome-bootstrap-checkbox.css">
+	<!-- Admin Stye -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->        
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+</head>
+
+<body>
+	<div class="brand clearfix">
+		<a href="index.html" class="logo"><img src="img/logo.jpg" class="img-responsive" alt=""></a>
+		<span class="menu-btn"><i class="fa fa-bars"></i></span>
+		<ul class="ts-profile-nav">
+			<li><a href="#">Help</a></li>
+			<li><a href="#">Settings</a></li>
+			<li class="ts-account">
+				<a href="#"><img src="img/ts-avatar.jpg" class="ts-avatar hidden-side" alt=""> Account <i class="fa fa-angle-down hidden-side"></i></a>
+				<ul>
+					<li><a href="#">My Account</a></li>
+					<li><a href="#">Edit Account</a></li>
+					<li><a href="#">Logout</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+	<div class="ts-main-content">
+		<nav class="ts-sidebar">
+			<ul class="ts-sidebar-menu">
+				<li class="ts-label">Search</li>
+				<li>
+					<input type="text" class="ts-sidebar-search" placeholder="Search here...">
+				</li>
+				<li class="ts-label">Main</li>
+				<li class="open"><a href="index.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+				<li><a href="#"><i class="fa fa-desktop"></i> Chairs List</a>
+					<ul>
+						<li>
+                            <a id="chair1" onClick="generateChairCharts(this)">Chair 1</a>
+                        </li>
+                        <li>
+                            <a id="chair2" onClick="generateChairCharts(this)">Chair 2</a>
+                        </li>
+                        <li>
+                            <a id="chair3" onClick="generateChairCharts(this)">Chair 3</a>
+                        </li>
+                        <li>
+                            <a id="chair4" onClick="generateChairCharts(this)">Chair 4</a>
+                        </li>
+					</ul>
+				</li>
+				<!--
+				<li><a href="tables.html"><i class="fa fa-table"></i> Tables</a></li>
+				<li><a href="forms.html"><i class="fa fa-edit"></i> Forms</a></li>
+				<li><a href="charts.html"><i class="fa fa-pie-chart"></i> Charts</a></li>
+				<li><a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown</a>
+				
+					<ul>
+						<li><a href="#">2nd level</a></li>
+						<li><a href="#">2nd level</a></li>
+						<li><a href="#">3rd level</a>
+							<ul>
+								<li><a href="#">3rd level</a></li>
+								<li><a href="#">3rd level</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				-->
+				<li><a href="#"><i class="fa fa-files-o"></i> Settings</a>
+					<ul>
+						<li><a href="blank.html">Blank page</a></li>
+						<li><a href="login.html">Login page</a></li>
+					</ul>
+				</li>
+
+				<!-- Account from above -->
+				<!--
+				<ul class="ts-profile-nav">
+					<li><a href="#">Help</a></li>
+					<li><a href="#">Settings</a></li>
+					<li class="ts-account">
+						<a href="#"><img src="img/ts-avatar.jpg" class="ts-avatar hidden-side" alt=""> Account <i class="fa fa-angle-down hidden-side"></i></a>
+						<ul>
+							<li><a href="#">My Account</a></li>
+							<li><a href="#">Edit Account</a></li>
+							<li><a href="#">Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+				-->
+			</ul>
+		</nav>
+		<div class="content-wrapper">
+			<div class="container-fluid">
+
+
+						<h2 class="page-title">Dashboard</h2>
+						
+
+						
+						<div class="row">
+							<div class="col-md-6">
+                                <div id="container" style="width: 800px; height: 400px; margin: 0 auto"></div>	
+                            </div>
+                            <div class="col-md-6">
+                                <div id="barchart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                            </div>
+						</div>
+
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Loading Scripts -->
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap-select.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script src="js/dataTables.bootstrap.min.js"></script>
+	<script src="js/Chart.min.js"></script>
+	<script src="js/fileinput.js"></script>
+	<script src="js/chartData.js"></script>
+	<script src="js/main.js"></script>
+	
+	<script>
+    
+		
+	window.onload = function(){
+    
+		// Line chart from swirlData for dashReport
+		var ctx = document.getElementById("dashReport").getContext("2d");
+		window.myLine = new Chart(ctx).Line(swirlData, {
+			responsive: true,
+			scaleShowVerticalLines: false,
+			scaleBeginAtZero : true,
+			multiTooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
+		}); 
+		
+		// Pie Chart from doughutData
+		var doctx = document.getElementById("chart-area3").getContext("2d");
+		window.myDoughnut = new Chart(doctx).Pie(doughnutData, {responsive : true});
+
+		// Dougnut Chart from doughnutData
+		var doctx = document.getElementById("chart-area4").getContext("2d");
+		window.myDoughnut = new Chart(doctx).Doughnut(doughnutData, {responsive : true});
+        
+	}
+	</script>
+    <script type="text/javascript">
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                defaultSeriesType: 'spline',
+                events: {
+                    load: requestData
+                }
+            },
+            title: {
+                text: 'Live random data'
+            },
+            xAxis: {
+                type: 'datetime',
+                tickPixelInterval: 150,
+                maxZoom: 20 * 1000
+            },
+            yAxis: {
+                minPadding: 0.2,
+                maxPadding: 0.2,
+                title: {
+                    text: 'Value',
+                    margin: 80
+                }
+            },
+            series: [{
+                name: 'Random data',
+                data: []
+            }]
+        });
+        
+        var chart1 = new Highcharts.Chart({
+            chart: {
+                renderTo: 'barchart',
+                type: 'column'                
+            },
+            title: {
+                text: 'Monthly Average Rainfall'
+            },
+            subtitle: {
+                text: 'Source: WorldClimate.com'
+            },
+            xAxis: {
+                categories: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ],
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Rainfall (mm)'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Tokyo',
+                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    
+            }, {
+                name: 'New York',
+                data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+    
+            }, {
+                name: 'London',
+                data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+    
+            }, {
+                name: 'Berlin',
+                data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+    
+            }]
+        });
+          
+    });        
+    function requestData() {
+        $.ajax({
+            url: 'getGraphData.php',
+            success: function(point) {
+                var series = chart.series[0],
+                    shift = series.data.length > 20; // shift if the series is 
+                                                     // longer than 20
+    
+                // add the point
+                chart.series[0].addPoint(point, true, shift);
+                
+                // call it again after one second
+                setTimeout(requestData, 1000);    
+            },
+            cache: false
+        });
+    } 
+   
+    
+</script>
+
+
+</body>
+
+</html>
