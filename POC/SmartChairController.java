@@ -10,9 +10,11 @@ import org.json.JSONObject;
 
 public class SmartChairController implements MqttCallback {
 	
-	public Boolean spark = false;
-	public Boolean gallileo = false;
-	public Boolean androidAngle = false;
+	public Boolean spark = true;
+	public Boolean gallileo = true;
+	public Boolean androidAngle = true;
+	
+	// these values will be updated from the MQTT callback
 	public int pressure1 = 0;
 	public int pressure2 = 0;
 	public int pressure3 = 0;
@@ -28,9 +30,9 @@ public class SmartChairController implements MqttCallback {
 	public static void main(String[] args) {
 		new SmartChairController().startSmartChairController();
 	}
+	
 	public void startSmartChairController()
 	{
-		Random randomgenerator = new Random();
 		try{
 			//client = new MqttClient("tcp://54.187.143.223:2882", "Sending");
 			client = new MqttClient(MosquittoBrokerUrl, "Sendingdata");
@@ -39,21 +41,7 @@ public class SmartChairController implements MqttCallback {
 			String[] topicFilter = {"/smartchair/data/spark","/smartchair/data/gallileo","/smartchair/data/angle"};
 			client.subscribe(topicFilter);
 			while(true)
-			{
-				if(!spark){
-					pressure1 = randomgenerator.nextInt(2);
-					pressure2 = randomgenerator.nextInt(2);
-					pressure3 = randomgenerator.nextInt(2);
-					pressure4 = randomgenerator.nextInt(2);
-					temperature = randomgenerator.nextInt(20);
-				}
-				if(!gallileo){
-					distance1 = randomgenerator.nextInt(2);
-					distance2 = randomgenerator.nextInt(2);	
-				}
-				if(!androidAngle){
-					angle =(double) randomgenerator.nextInt(90);
-				}
+			{	
 				JSONObject dataToSend = new JSONObject();
 				dataToSend.put("pressure1", pressure1) ;
 				dataToSend.put("pressure2", pressure2) ;
@@ -89,6 +77,7 @@ public class SmartChairController implements MqttCallback {
 		try{
 			String s[] = topic.split("/");
 			if(s[3].equals("spark")){
+				System.out.println("test " + message.toString());
 				JSONObject jsonDoc = new JSONObject(message.toString());
 				int pressure1 = jsonDoc.getInt("pressure1");
 				int pressure2 = jsonDoc.getInt("pressure2");
@@ -109,6 +98,9 @@ public class SmartChairController implements MqttCallback {
 				this.distance2 = distance2;
 			}
 			else if(s[3].equals("angle")){
+				System.out.println("angle " + message.toString());
+				JSONObject jsonDoc = new JSONObject(message.toString());
+				int angle = jsonDoc.getInt("angle");
 				this.angle = angle;
 			}
 			
